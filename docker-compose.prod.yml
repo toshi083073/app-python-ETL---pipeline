@@ -1,0 +1,30 @@
+#docker-compose.prod.yml
+version: '3.8'
+
+services:
+  postgres:
+    build:  # 任意
+    restart: always
+    environment:
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: mypassword
+      POSTGRES_DB: mydb
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data  # ✅ 永続化ポイント
+
+  python:
+    build: .
+    restart: always
+    depends_on:
+      - postgres
+    volumes:
+      - .:/app
+    env_file:
+      - .env
+    environment:
+      - PYTHONPATH=/app
+
+volumes:
+  pgdata:  # ✅ ← ここは絶対に必要（ボリューム名の宣言）

@@ -1,0 +1,95 @@
+📋 このスクリプトの使い方
+VS Codeやエディタで新しくファイルを作成
+
+ファイル名：docker_run.sh
+
+上記のコードを貼り付け＆保存
+
+ターミナルでそのディレクトリに移動
+
+実行権限を付与
+
+bash
+コピーする
+編集する
+chmod +x docker_run.sh
+スクリプトを実行！
+
+bash
+コピーする
+編集する
+./docker_run.sh
+
+# 🚀 1. コンテナ起動・停止・再起動
+
+# 📦 すべてのサービスをバックグラウンドで起動
+docker compose up -d
+
+# ❌ すべてのサービスを停止・削除（ボリュームは残る）
+docker compose down
+
+# 🔁 Dockerfileを変更した場合の再ビルド＆起動
+docker compose up --build -d
+
+
+# 🔍 2. コンテナに入る（ログイン）
+
+# 🐍 Python用コンテナに入る
+docker exec -it python_container bash
+
+# 🐘 PostgreSQL用コンテナに入り、DBに直接接続
+docker exec -it postgres_container psql -U myuser -d mydb
+
+
+# 🗃 3. PostgreSQLへCSVインポート（CLIから）
+
+# 🧾 csvファイルをDBにロードする（事前にテーブル作成しておく）
+\copy supermarket_sales FROM '/import_data/Kaggle_SuperMarket_Analysis.csv' DELIMITER ',' CSV HEADER;
+
+
+# 🛠 4. Pythonスクリプトの実行（CLI方式）
+
+# 🧮 通常のPythonスクリプト実行（例：sales_pipeline.py）
+docker exec -it python_container bash -c "PYTHONPATH=/app python scripts/sales_pipeline.py"
+
+# 🧭 CLIメニュー式スクリプト（例：cli.py pipeline）
+docker exec -it python_container bash -c "PYTHONPATH=/app python cli.py pipeline"
+
+
+# 🧹 5. コンテナ削除・クリーンアップ（トラブル時）
+
+# 🧼 名前衝突エラーが出たときなど、個別にコンテナ強制削除
+docker rm -f postgres_container
+docker rm -f python_container
+docker rm -f pgadmin_container
+
+
+# 📊 6. コンテナとネットワークの状態確認
+
+# ▶️ 稼働中コンテナのみ確認
+docker ps
+
+# ⏹ 停止中も含めすべてのコンテナ確認
+docker ps -a
+
+# === 1. 初期化 ===
+echo "📁 フォルダ作成"
+mkdir -p app/import_data app/scripts app/query app/config app/output
+
+# === 2. Dockerサービス起動 ===
+echo "🚀 Docker起動"
+docker compose up -d --build
+
+# === 3. PostgreSQLに接続（psql）===
+echo "🐘 PostgreSQL接続:"
+echo "コマンド: docker exec -it postgres_container psql -U myuser -d mydb"
+
+# === 4. Pythonスクリプト実行例 ===
+echo "🧮 Pythonパイプライン実行"
+docker exec -it python_container bash -c "PYTHONPATH=/app python scripts/sales_pipeline.py"
+
+# === 5. CLIコマンド例 ===
+echo "📌 CLIパイプライン実行"
+docker exec -it python_container bash -c "PYTHONPATH=/app python cli.py pipeline"
+"""
+

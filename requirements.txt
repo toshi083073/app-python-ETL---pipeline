@@ -1,0 +1,5 @@
+#app/requirements.txt
+pandas
+matplotlib
+psycopg2-binary
+jupyterlab

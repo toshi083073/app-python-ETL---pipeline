@@ -1,0 +1,19 @@
+{
+  "name": "Python Data Analysis Env",
+  "dockerComposeFile": [
+    "../docker-compose.yml",
+    "../docker-compose.override.yml"
+  ],
+  "service": "python",
+  "workspaceFolder": "/app",
+  "settings": {
+    "python.defaultInterpreterPath": "/usr/local/bin/python",
+    "jupyter.jupyterServerType": "local",
+    "jupyter.notebookFileRoot": "/app/notebooks"
+  },
+  "extensions": [
+    "ms-python.python",
+    "ms-toolsai.jupyter"
+  ],
+  "postCreateCommand": "mkdir -p /app/notebooks"
+}

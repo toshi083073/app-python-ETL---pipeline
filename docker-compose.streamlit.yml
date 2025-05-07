@@ -1,0 +1,19 @@
+#docker-compose.streamlit.yml
+version: '3.8'
+
+services:
+  python:
+    build: .  # Dockerfileを使ってビルド
+    volumes:
+      - .:/app  # ホットリロード対応
+    env_file:
+      - .env    # Redshift or Local 接続切り替えを.envで管理
+    environment:
+      - PYTHONPATH=/app
+    command: >
+      streamlit run scripts/streamlit_dashboard.py
+      --server.enableCORS=false
+      --server.port=8501
+      --server.address=0.0.0.0
+    ports:
+      - "8501:8501"

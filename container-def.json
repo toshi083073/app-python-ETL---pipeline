@@ -1,0 +1,29 @@
+[
+    {
+      "name": "redshift-etl",
+      "image": "802190220015.dkr.ecr.ap-northeast-1.amazonaws.com/redshift-etl:latest",
+      "essential": true,
+      "command": [
+        "sh", "-c", "echo 'Fargate task started' && python scripts/etl_copy_redshift.py && echo 'Fargate task finished'"
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/redshift-etl",
+          "awslogs-region": "ap-northeast-1",
+          "awslogs-stream-prefix": "fargate"
+        }
+      },
+      "environment": [
+        { "name": "REDSHIFT_HOST", "value": "default-workgroup.802190220015.ap-northeast-1.redshift-serverless.amazonaws.com" },
+        { "name": "REDSHIFT_PORT", "value": "5439" },
+        { "name": "REDSHIFT_DB", "value": "dev" },
+        { "name": "REDSHIFT_USER", "value": "admin" },
+        { "name": "REDSHIFT_PASSWORD", "value": "MySecurePass123!" },
+        { "name": "REDSHIFT_IAM_ROLE_ARN", "value": "arn:aws:iam::802190220015:role/service-role/AmazonRedshift-CommandsAccessRole-20250501T191808" },
+        { "name": "S3_SOURCE_PATH", "value": "s3://my-redshift-bucket-20250501/sales.csv" },
+        { "name": "REDSHIFT_DATABASE_URL", "value": "postgresql://admin:MySecurePass123!@default-workgroup.802190220015.ap-northeast-1.redshift-serverless.amazonaws.com:5439/dev" }
+      ]
+    }
+  ]
+  

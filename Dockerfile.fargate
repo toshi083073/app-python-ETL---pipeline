@@ -1,0 +1,30 @@
+# [NOTE] このDockerfileは AWS Fargate 上で実行される Redshift Serverless へのアクセスを前提に構成
+# - OS: Linux (X86_64)
+# - 必ず `python3` + `psycopg2` + `boto3` を含む
+# - redshift-serverless に接続する場合、セキュリティグループ設定に注意（TCP:5439）
+
+# - トラブル例: Fargate から Redshift への接続がタイムアウト
+#   原因: Redshift 側 SG に Fargate の SG or CIDR 許可がなかった
+
+
+# ベースイメージは軽量Python
+FROM python:3.11-slim
+
+# 必要なシステムパッケージをインストール（psycopg2用にlibpqが必要）
+RUN apt-get update && apt-get install -y gcc libpq-dev
+
+# 作業ディレクトリ
+WORKDIR /app
+
+# ソースコードをコピー
+COPY . /app
+
+# 必要パッケージをインストール（Redshift + dotenv）
+RUN pip install --no-cache-dir \
+    psycopg2-binary \
+    sqlalchemy \
+    python-dotenv
+
+# 起動時にスクリプトを実行（echoとsleepでログ追跡しやすく）
+CMD ["sh", "-c", "echo '🔍 Starting Fargate task...' && ls -l /app/scripts && cat /app/scripts/etl_copy_redshift.py && python scripts/etl_copy_redshift.py && echo '✅ Task finished'"]
+
